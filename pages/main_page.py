@@ -1,7 +1,6 @@
 from pages.base_page import BasePage
 from locators.main_page_locators import MainPageLocators
 import allure
-import time
 
 class MainPage(BasePage):
     """Класс для работы с главной страницей"""
@@ -9,6 +8,19 @@ class MainPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
         self.locators = MainPageLocators()
+    
+    @allure.step("Скрыть баннер куки")
+    def hide_cookie_banner(self):
+        """Скрыть баннер с куки"""
+        try:
+            self.driver.execute_script("""
+                var cookieBanner = document.querySelector('.App_CookieConsent__1yUIN');
+                if (cookieBanner) {
+                    cookieBanner.style.display = 'none';
+                }
+            """)
+        except:
+            pass
     
     @allure.step("Кликнуть на кнопку 'Заказать' вверху страницы")
     def click_order_button_top(self):
@@ -18,7 +30,6 @@ class MainPage(BasePage):
     @allure.step("Кликнуть на кнопку 'Заказать' внизу страницы")
     def click_order_button_bottom(self):
         """Кликнуть на нижнюю кнопку 'Заказать'"""
-        # Скрываем баннер куки перед кликом
         self.hide_cookie_banner()
         self.click_element(self.locators.ORDER_BUTTON_BOTTOM)
     
@@ -35,25 +46,18 @@ class MainPage(BasePage):
     @allure.step("Кликнуть на вопрос №{question_index}")
     def click_question(self, question_index):
         """Кликнуть на вопрос по индексу"""
-        # Скрываем баннер куки
         self.hide_cookie_banner()
-        
         question_locator = (self.locators.QUESTION_TEMPLATE[0], 
                            self.locators.QUESTION_TEMPLATE[1].format(question_index))
-        # Прокручиваем до элемента
-        element = self.driver.find_element(*question_locator)
-        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
-        time.sleep(0.5)
+        self.scroll_to_element(question_locator)
         self.click_element(question_locator)
-        time.sleep(0.5)  # Ждем анимации
     
     @allure.step("Получить текст ответа на вопрос №{question_index}")
     def get_answer_text(self, question_index):
         """Получить текст ответа на вопрос по индексу"""
         answer_locator = (self.locators.ANSWER_TEMPLATE[0], 
                          self.locators.ANSWER_TEMPLATE[1].format(question_index))
-        # Ждем, пока ответ появится
-        time.sleep(0.5)
+        self.wait.until(EC.visibility_of_element_located(answer_locator))
         return self.get_text(answer_locator)
     
     @allure.step("Проверить видимость ответа на вопрос №{question_index}")
@@ -62,10 +66,3 @@ class MainPage(BasePage):
         answer_locator = (self.locators.ANSWER_TEMPLATE[0], 
                          self.locators.ANSWER_TEMPLATE[1].format(question_index))
         return self.is_element_visible(answer_locator)
-    
-    @allure.step("Проверить, что ответ на вопрос №{question_index} присутствует")
-    def is_answer_present(self, question_index):
-        """Проверить, присутствует ли ответ на вопрос в DOM"""
-        answer_locator = (self.locators.ANSWER_TEMPLATE[0], 
-                         self.locators.ANSWER_TEMPLATE[1].format(question_index))
-        return self.is_element_present(answer_locator)

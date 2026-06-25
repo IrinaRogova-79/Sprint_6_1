@@ -14,7 +14,6 @@ class BasePage:
     def open_page(self, url):
         """Открыть страницу по URL"""
         self.driver.get(url)
-        # Ждем загрузки страницы
         self.wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
     
     @allure.step("Найти элемент: {locator}")
