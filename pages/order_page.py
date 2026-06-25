@@ -4,6 +4,7 @@ from pages.base_page import BasePage
 from locators.order_page_locators import OrderPageLocators
 import allure
 
+
 class OrderPage(BasePage):
     """Класс для работы со страницей заказа"""
     
@@ -11,18 +12,22 @@ class OrderPage(BasePage):
         super().__init__(driver)
         self.locators = OrderPageLocators()
     
+    @allure.step("Заполнить поле имени: {name}")
     def _fill_name(self, name):
         """Заполнить поле имени"""
         self.input_text(self.locators.NAME_INPUT, name)
     
+    @allure.step("Заполнить поле фамилии: {surname}")
     def _fill_surname(self, surname):
         """Заполнить поле фамилии"""
         self.input_text(self.locators.SURNAME_INPUT, surname)
     
+    @allure.step("Заполнить поле адреса: {address}")
     def _fill_address(self, address):
         """Заполнить поле адреса"""
         self.input_text(self.locators.ADDRESS_INPUT, address)
     
+    @allure.step("Заполнить поле телефона: {phone}")
     def _fill_phone(self, phone):
         """Заполнить поле телефона"""
         phone_input = self.find_element(self.locators.PHONE_INPUT)
@@ -32,6 +37,7 @@ class OrderPage(BasePage):
         else:
             phone_input.send_keys(phone)
     
+    @allure.step("Выбрать станцию метро: {metro}")
     def _select_metro_station(self, metro):
         """Выбор станции метро из выпадающего списка"""
         metro_input = self.find_element(self.locators.METRO_INPUT)
@@ -57,10 +63,12 @@ class OrderPage(BasePage):
         
         raise AssertionError(f"Не удалось выбрать станцию метро: {metro}")
     
+    @allure.step("Нажать кнопку 'Далее'")
     def _click_next_button(self):
         """Нажать кнопку 'Далее'"""
         self.click_element(self.locators.NEXT_BUTTON)
     
+    @allure.step("Ожидать загрузки второй страницы")
     def _wait_for_second_page(self):
         """Ожидать загрузки второй страницы"""
         self.wait.until(EC.visibility_of_element_located(self.locators.DATE_INPUT))
