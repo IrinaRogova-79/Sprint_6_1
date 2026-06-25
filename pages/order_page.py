@@ -45,7 +45,6 @@ class OrderPage(BasePage):
         metro_input.clear()
         metro_input.send_keys(metro)
         
-        # Ожидаем появления списка станций
         self.wait.until(
             lambda driver: len(driver.find_elements(By.XPATH, "//div[@class='select-search__select']//button")) > 0
         )
@@ -57,7 +56,6 @@ class OrderPage(BasePage):
             if station_text == metro or metro.lower() in station_text.lower():
                 self.scroll_to_element((By.XPATH, f"//div[@class='select-search__select']//button[contains(text(), '{station_text}')]"))
                 station.click()
-                # Ожидаем, что поле заполнилось
                 self.wait.until(lambda driver: metro_input.get_attribute("value") != "")
                 return
         
