@@ -1,9 +1,9 @@
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 from locators.order_page_locators import OrderPageLocators
 import allure
+import time
 
 
 class OrderPage(BasePage):
@@ -126,16 +126,24 @@ class OrderPage(BasePage):
     @allure.step("Нажать кнопку 'Заказать' на второй странице")
     def _click_order_button(self):
         """Нажать кнопку 'Заказать'"""
-        # Находим кнопку и прокручиваем к ней
-        order_button = self.find_element(self.locators.ORDER_BUTTON)
+        # Находим кнопку в контейнере формы
+        try:
+            order_button = self.driver.find_element(By.XPATH, "//div[contains(@class, 'Order_Content')]//button[text()='Заказать']")
+        except:
+            try:
+                order_button = self.driver.find_element(By.XPATH, "//div[contains(@class, 'Order_Buttons')]//button[text()='Заказать']")
+            except:
+                try:
+                    order_button = self.driver.find_element(By.XPATH, "//form//button[text()='Заказать']")
+                except:
+                    order_button = self.find_element(self.locators.ORDER_BUTTON)
+        
+        # Прокручиваем к кнопке
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", order_button)
         time.sleep(0.5)
         
-        # Пробуем кликнуть через JavaScript (более надежно)
-        try:
-            self.driver.execute_script("arguments[0].click();", order_button)
-        except:
-            order_button.click()
+        # Кликаем через JavaScript
+        self.driver.execute_script("arguments[0].click();", order_button)
     
     @allure.step("Ожидать появления модального окна")
     def _wait_for_modal(self):
@@ -155,7 +163,6 @@ class OrderPage(BasePage):
     @allure.step("Подтвердить заказ")
     def confirm_order(self):
         """Подтвердить заказ во всплывающем окне"""
-        # Ждем, пока кнопка "Да" станет кликабельной
         self.wait.until(EC.element_to_be_clickable(self.locators.CONFIRM_ORDER_BUTTON))
         self.click_element(self.locators.CONFIRM_ORDER_BUTTON)
     
