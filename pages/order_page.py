@@ -30,15 +30,11 @@ class OrderPage(BasePage):
             phone_input.send_keys(phone)
     
     def _select_metro_station(self, metro):
-        """Выбор станции метро из выпадающего списка"""
         metro_input = self.find_element(self.locators.METRO_INPUT)
         metro_input.click()
-        
         metro_input.clear()
         metro_input.send_keys(metro)
-        
         self.wait.until(lambda driver: len(driver.find_elements(By.XPATH, "//div[@class='select-search__select']//button")) > 0)
-        
         stations = self.find_elements((By.XPATH, "//div[@class='select-search__select']//button"))
         
         for station in stations:
@@ -58,7 +54,6 @@ class OrderPage(BasePage):
     
     @allure.step("Заполнить первую страницу заказа (Для кого самокат)")
     def fill_first_page(self, name, surname, address, metro, phone):
-        """Заполнить первую страницу заказа"""
         self._fill_name(name)
         self._fill_surname(surname)
         self._fill_address(address)
@@ -71,7 +66,6 @@ class OrderPage(BasePage):
     def _select_date(self, date):
         date_input = self.find_element(self.locators.DATE_INPUT)
         date_input.click()
-        
         day = date.split('.')[0]
         date_elements = self.find_elements((By.XPATH, "//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'react-datepicker__day--outside-month'))]"))
         for element in date_elements:
@@ -100,9 +94,8 @@ class OrderPage(BasePage):
     
     @allure.step("Нажать кнопку 'Заказать' на второй странице")
     def _click_order_button(self):
-        order_button = self.find_element(self.locators.ORDER_BUTTON)
         self.scroll_to_element(self.locators.ORDER_BUTTON)
-        order_button.click()
+        self.click_element(self.locators.ORDER_BUTTON)
     
     @allure.step("Ожидать появления модального окна")
     def _wait_for_modal(self):
@@ -110,7 +103,6 @@ class OrderPage(BasePage):
     
     @allure.step("Заполнить вторую страницу заказа (Про аренду)")
     def fill_second_page(self, date, rental_period, color, comment):
-        """Заполнить вторую страницу заказа"""
         self._select_date(date)
         self._select_rental_period(rental_period)
         self._select_color(color)
@@ -120,10 +112,8 @@ class OrderPage(BasePage):
     
     @allure.step("Подтвердить заказ")
     def confirm_order(self):
-        """Подтвердить заказ во всплывающем окне"""
         self.click_element(self.locators.CONFIRM_ORDER_BUTTON)
     
     @allure.step("Проверить успешность создания заказа")
     def check_order_success(self):
-        """Проверить, что заказ успешно создан"""
         return self.is_element_visible(self.locators.ORDER_SUCCESS_MESSAGE, timeout=15)
