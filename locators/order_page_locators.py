@@ -22,10 +22,7 @@ class OrderPageLocators:
     
     # Подтверждение заказа
     CONFIRM_ORDER_BUTTON = (By.XPATH, ".//button[text()='Да']")
-    CONFIRM_ORDER_BUTTON_ALT = (By.XPATH, ".//button[contains(@class, 'Button_Button__ra12g') and text()='Да']")
-    
-    # Сообщение об успешном создании заказа - исправленные локаторы
     ORDER_SUCCESS_MESSAGE = (By.XPATH, ".//div[contains(@class, 'Order_ModalHeader__3FDaJ')]")
-    ORDER_SUCCESS_MESSAGE_ALT = (By.XPATH, ".//div[contains(text(), 'Заказ оформлен')]")
-    ORDER_SUCCESS_MESSAGE_ALT2 = (By.XPATH, ".//div[contains(@class, 'Order_Modal')]//div[contains(text(), 'Заказ оформлен')]")
-    ORDER_MODAL = (By.XPATH, ".//div[contains(@class, 'Order_Modal')]")
+    
+    # Модальное окно
+    MODAL_WINDOW = (By.XPATH, "//div[contains(@class, 'Order_Modal')]")
