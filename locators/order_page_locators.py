@@ -24,10 +24,12 @@ class OrderPageLocators:
     CONFIRM_ORDER_BUTTON = (By.XPATH, ".//button[text()='Да']")
     ORDER_SUCCESS_MESSAGE = (By.XPATH, ".//div[contains(@class, 'Order_ModalHeader__3FDaJ')]")
     
-    # Локаторы ошибок
-    ERROR_ELEMENTS = (By.XPATH, "//div[contains(@class, 'error') or contains(@class, 'Error')]")
-    ERROR_INPUTS = (By.XPATH, "//input[contains(@class, 'error') or contains(@class, 'Error')]")
+    # Модальное окно
     MODAL_WINDOW = (By.XPATH, "//div[contains(@class, 'Order_Modal')]")
+    
+    # Локаторы для списка станций метро
     METRO_STATION = (By.XPATH, "//div[@class='select-search__select']//button")
     METRO_STATION_BY_TEXT = (By.XPATH, "//div[@class='select-search__select']//button[contains(text(), '{}')]")
+    
+    # Локаторы для даты
     DATE_DAY = (By.XPATH, "//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'react-datepicker__day--outside-month'))]")
