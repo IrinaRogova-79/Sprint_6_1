@@ -1,25 +1,64 @@
+import os
 import pytest
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
-import os
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
+from dotenv import load_dotenv
+
+# Загружаем переменные окружения
+load_dotenv()
+
+BROWSER = os.getenv("BROWSER", "firefox")
+HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
+BASE_URL = os.getenv("BASE_URL", "https://qa-scooter.praktikum-services.ru/")
+
+
+def get_firefox_driver():
+    """Создание Firefox драйвера"""
+    options = FirefoxOptions()
+    if HEADLESS:
+        options.add_argument("--headless")
+    
+    # Пробуем использовать webdriver-manager
+    try:
+        service = FirefoxService(GeckoDriverManager().install())
+        return webdriver.Firefox(service=service, options=options)
+    except:
+        # Fallback на системный драйвер
+        return webdriver.Firefox(options=options)
+
+
+def get_chrome_driver():
+    """Создание Chrome драйвера"""
+    options = ChromeOptions()
+    if HEADLESS:
+        options.add_argument("--headless")
+    
+    try:
+        service = ChromeService(ChromeDriverManager().install())
+        return webdriver.Chrome(service=service, options=options)
+    except:
+        return webdriver.Chrome(options=options)
+
 
 @pytest.fixture(scope="function")
 def driver():
-    """Фикстура для создания и закрытия драйвера Firefox"""
-    # Настройка опций для Firefox
-    options = Options()
-    # options.add_argument("--headless")  # Раскомментировать для headless режима
+    """Фикстура для создания и закрытия драйвера"""
+    if BROWSER.lower() == "chrome":
+        driver = get_chrome_driver()
+    else:
+        driver = get_firefox_driver()
     
-    # Использование локального geckodriver
-    driver_path = os.path.join(os.path.dirname(__file__), "drivers", "geckodriver.exe")
-    service = Service(driver_path)
-    
-    # Создание драйвера
-    driver = webdriver.Firefox(service=service, options=options)
     driver.maximize_window()
-    
     yield driver
-    
-    # Закрытие браузера
     driver.quit()
+
+
+@pytest.fixture
+def base_url():
+    """Фикстура с базовым URL"""
+    return BASE_URL
