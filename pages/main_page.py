@@ -1,6 +1,9 @@
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 from locators.main_page_locators import MainPageLocators
 import allure
+
 
 class MainPage(BasePage):
     """Класс для работы с главной страницей"""
@@ -55,7 +58,7 @@ class MainPage(BasePage):
     @allure.step("Получить текст ответа на вопрос №{question_index}")
     def get_answer_text(self, question_index):
         """Получить текст ответа на вопрос по индексу"""
-        answer_locator = (self.locators.ANSWER_TEMPLATE[0], 
+        answer_locator = (self.locators.ANSWER_TEMPLATE[0],
                          self.locators.ANSWER_TEMPLATE[1].format(question_index))
         self.wait.until(EC.visibility_of_element_located(answer_locator))
         return self.get_text(answer_locator)
@@ -63,6 +66,6 @@ class MainPage(BasePage):
     @allure.step("Проверить видимость ответа на вопрос №{question_index}")
     def is_answer_visible(self, question_index):
         """Проверить, виден ли ответ на вопрос"""
-        answer_locator = (self.locators.ANSWER_TEMPLATE[0], 
+        answer_locator = (self.locators.ANSWER_TEMPLATE[0],
                          self.locators.ANSWER_TEMPLATE[1].format(question_index))
         return self.is_element_visible(answer_locator)
