@@ -1,3 +1,4 @@
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
@@ -55,7 +56,6 @@ class OrderPage(BasePage):
         for station in stations:
             station_text = station.text.strip()
             if station_text == metro or metro.lower() in station_text.lower():
-                # Находим элемент станции и кликаем по нему
                 station.click()
                 # Ожидаем, что поле заполнилось
                 self.wait.until(lambda driver: metro_input.get_attribute("value") != "")
@@ -126,8 +126,16 @@ class OrderPage(BasePage):
     @allure.step("Нажать кнопку 'Заказать' на второй странице")
     def _click_order_button(self):
         """Нажать кнопку 'Заказать'"""
-        self.scroll_to_element(self.locators.ORDER_BUTTON)
-        self.click_element(self.locators.ORDER_BUTTON)
+        # Находим кнопку и прокручиваем к ней
+        order_button = self.find_element(self.locators.ORDER_BUTTON)
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", order_button)
+        time.sleep(0.5)
+        
+        # Пробуем кликнуть через JavaScript (более надежно)
+        try:
+            self.driver.execute_script("arguments[0].click();", order_button)
+        except:
+            order_button.click()
     
     @allure.step("Ожидать появления модального окна")
     def _wait_for_modal(self):
@@ -147,6 +155,8 @@ class OrderPage(BasePage):
     @allure.step("Подтвердить заказ")
     def confirm_order(self):
         """Подтвердить заказ во всплывающем окне"""
+        # Ждем, пока кнопка "Да" станет кликабельной
+        self.wait.until(EC.element_to_be_clickable(self.locators.CONFIRM_ORDER_BUTTON))
         self.click_element(self.locators.CONFIRM_ORDER_BUTTON)
     
     @allure.step("Проверить успешность создания заказа")
