@@ -14,7 +14,6 @@ load_dotenv()
 
 BROWSER = os.getenv("BROWSER", "firefox")
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
-BASE_URL = os.getenv("BASE_URL", "https://qa-scooter.praktikum-services.ru/")
 
 
 def get_firefox_driver():
@@ -23,12 +22,10 @@ def get_firefox_driver():
     if HEADLESS:
         options.add_argument("--headless")
     
-    # Пробуем использовать webdriver-manager
     try:
         service = FirefoxService(GeckoDriverManager().install())
         return webdriver.Firefox(service=service, options=options)
     except:
-        # Fallback на системный драйвер
         return webdriver.Firefox(options=options)
 
 
