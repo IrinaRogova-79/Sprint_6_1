@@ -16,7 +16,7 @@ class MainPage(BasePage):
     def hide_cookie_banner(self):
         """Скрыть баннер с куки"""
         try:
-            self.driver.execute_script("""
+            self.execute_script("""
                 var cookieBanner = document.querySelector('.App_CookieConsent__1yUIN');
                 if (cookieBanner) {
                     cookieBanner.style.display = 'none';

@@ -43,6 +43,12 @@ class BasePage:
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
         self.driver.execute_script("arguments[0].click();", element)
     
+    @allure.step("Кликнуть на WebElement через JavaScript")
+    def click_webelement_js(self, element):
+        """Кликнуть на WebElement через JavaScript"""
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+        self.driver.execute_script("arguments[0].click();", element)
+    
     @allure.step("Ввести текст в поле: {locator}")
     def input_text(self, locator, text):
         """Ввести текст в поле ввода"""
@@ -77,8 +83,13 @@ class BasePage:
     
     @allure.step("Прокрутить до элемента: {locator}")
     def scroll_to_element(self, locator):
-        """Прокрутить до элемента"""
+        """Прокрутить до элемента по локатору"""
         element = self.driver.find_element(*locator)
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+    
+    @allure.step("Прокрутить до WebElement")
+    def scroll_to_webelement(self, element):
+        """Прокрутить до WebElement"""
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
     
     @allure.step("Получить текущий URL")
@@ -91,13 +102,17 @@ class BasePage:
         """Переключиться на новую вкладку"""
         self.driver.switch_to.window(self.driver.window_handles[-1])
     
-    @allure.step("Закрыть новую вкладку и вернуться на главную")
-    def close_current_window(self):
-        """Закрыть текущую вкладку и вернуться на предыдущую"""
-        self.driver.close()
-        self.driver.switch_to.window(self.driver.window_handles[0])
-    
     @allure.step("Ожидать открытия новой вкладки")
     def wait_for_new_window(self, initial_windows_count):
         """Ожидать открытия новой вкладки"""
         self.wait.until(lambda driver: len(driver.window_handles) > initial_windows_count)
+    
+    @allure.step("Ожидать загрузки URL (не about:blank)")
+    def wait_for_url_loaded(self):
+        """Ожидать загрузки URL (не about:blank)"""
+        self.wait.until(lambda driver: driver.current_url != "about:blank")
+    
+    @allure.step("Выполнить скрипт JavaScript")
+    def execute_script(self, script, *args):
+        """Выполнить JavaScript скрипт"""
+        return self.driver.execute_script(script, *args)
