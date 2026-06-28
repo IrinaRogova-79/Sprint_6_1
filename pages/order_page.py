@@ -123,17 +123,11 @@ class OrderPage(BasePage):
     @allure.step("Нажать кнопку 'Заказать' на второй странице")
     def _click_order_button(self):
         """Нажать кнопку 'Заказать'"""
-        # Находим кнопку в контейнере формы
+        # Находим кнопку в контейнере формы (один надежный способ)
         try:
             order_button = self.find_element(self.locators.ORDER_BUTTON_IN_CONTENT)
         except:
-            try:
-                order_button = self.find_element(self.locators.ORDER_BUTTON_IN_BUTTONS)
-            except:
-                try:
-                    order_button = self.find_element(self.locators.ORDER_BUTTON_IN_FORM)
-                except:
-                    order_button = self.find_element(self.locators.ORDER_BUTTON)
+            order_button = self.find_element(self.locators.ORDER_BUTTON_IN_BUTTONS)
         
         # Прокручиваем к кнопке
         self.scroll_to_webelement(order_button)
