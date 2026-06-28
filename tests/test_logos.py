@@ -1,6 +1,6 @@
 import allure
 from pages.main_page import MainPage
-from data import MAIN_URL
+from urls import MAIN_URL
 
 
 @allure.epic("Логотипы")
@@ -37,10 +37,10 @@ class TestLogos:
         main_page.wait_for_new_window(initial_tabs)
         
         # Переключаемся на новую вкладку
-        driver.switch_to.window(driver.window_handles[-1])
+        main_page.switch_to_new_window()
         
         # Ожидаем загрузки страницы (ждем, пока URL изменится с about:blank)
-        main_page.wait.until(lambda driver: driver.current_url != "about:blank")
+        main_page.wait_for_url_loaded()
         
         current_url = main_page.get_current_url()
         assert "dzen.ru" in current_url.lower() or "yandex" in current_url.lower(), \

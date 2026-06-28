@@ -1,7 +1,8 @@
 import allure
 import pytest
 from pages.main_page import MainPage
-from data import MAIN_URL, FAQ_DATA
+from urls import MAIN_URL
+from data import FAQ_DATA
 
 
 @allure.epic("Главная страница")

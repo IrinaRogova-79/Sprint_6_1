@@ -2,7 +2,8 @@ import allure
 import pytest
 from pages.main_page import MainPage
 from pages.order_page import OrderPage
-from data import MAIN_URL, TestData
+from urls import MAIN_URL
+from data import TestData
 
 
 @allure.epic("Сценарий заказа")
