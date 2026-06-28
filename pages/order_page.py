@@ -3,7 +3,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 from locators.order_page_locators import OrderPageLocators
 import allure
-import time
 
 
 class OrderPage(BasePage):
@@ -48,10 +47,10 @@ class OrderPage(BasePage):
         
         # Ожидаем появления списка станций
         self.wait.until(
-            lambda driver: len(driver.find_elements(By.XPATH, "//div[@class='select-search__select']//button")) > 0
+            lambda driver: len(driver.find_elements(*self.locators.METRO_STATION_LIST)) > 0
         )
         
-        stations = self.find_elements((By.XPATH, "//div[@class='select-search__select']//button"))
+        stations = self.find_elements(self.locators.METRO_STATION_LIST)
         
         for station in stations:
             station_text = station.text.strip()
@@ -91,9 +90,7 @@ class OrderPage(BasePage):
         date_input.click()
         
         day = date.split('.')[0]
-        date_elements = self.find_elements(
-            (By.XPATH, "//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'react-datepicker__day--outside-month'))]")
-        )
+        date_elements = self.find_elements(self.locators.DATE_DAY)
         for element in date_elements:
             if element.text.strip() == day:
                 element.click()
@@ -128,22 +125,21 @@ class OrderPage(BasePage):
         """Нажать кнопку 'Заказать'"""
         # Находим кнопку в контейнере формы
         try:
-            order_button = self.driver.find_element(By.XPATH, "//div[contains(@class, 'Order_Content')]//button[text()='Заказать']")
+            order_button = self.find_element(self.locators.ORDER_BUTTON_IN_CONTENT)
         except:
             try:
-                order_button = self.driver.find_element(By.XPATH, "//div[contains(@class, 'Order_Buttons')]//button[text()='Заказать']")
+                order_button = self.find_element(self.locators.ORDER_BUTTON_IN_BUTTONS)
             except:
                 try:
-                    order_button = self.driver.find_element(By.XPATH, "//form//button[text()='Заказать']")
+                    order_button = self.find_element(self.locators.ORDER_BUTTON_IN_FORM)
                 except:
                     order_button = self.find_element(self.locators.ORDER_BUTTON)
         
         # Прокручиваем к кнопке
-        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", order_button)
-        time.sleep(0.5)
+        self.scroll_to_webelement(order_button)
         
         # Кликаем через JavaScript
-        self.driver.execute_script("arguments[0].click();", order_button)
+        self.click_webelement_js(order_button)
     
     @allure.step("Ожидать появления модального окна")
     def _wait_for_modal(self):
