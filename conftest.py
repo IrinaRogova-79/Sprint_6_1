@@ -56,9 +56,3 @@ def driver():
     driver.maximize_window()
     yield driver
     driver.quit()
-
-
-@pytest.fixture
-def base_url():
-    """Фикстура с базовым URL"""
-    return BASE_URL
