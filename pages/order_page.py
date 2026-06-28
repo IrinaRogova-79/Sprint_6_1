@@ -90,21 +90,36 @@ class OrderPage(BasePage):
         date_input.click()
         
         day = date.split('.')[0]
+        
+        # Ожидаем появления календаря
+        self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "react-datepicker__day")))
+        
         date_elements = self.find_elements(self.locators.DATE_DAY)
         for element in date_elements:
             if element.text.strip() == day:
-                element.click()
+                self.click_webelement_js(element)  # Используем JS клик для надёжности
                 break
+        
+        # Ожидаем, что дата выбралась
+        self.wait.until(lambda driver: date_input.get_attribute("value") != "")
     
     @allure.step("Выбрать срок аренды: {rental_period}")
     def _select_rental_period(self, rental_period):
         """Выбор срока аренды"""
         self.click_element(self.locators.RENTAL_PERIOD_INPUT)
+        
+        # Ожидаем появления выпадающего списка
         rental_option_locator = (
             self.locators.RENTAL_PERIOD_OPTION[0],
             self.locators.RENTAL_PERIOD_OPTION[1].format(rental_period)
         )
+        self.wait.until(EC.element_to_be_clickable(rental_option_locator))
         self.click_element(rental_option_locator)
+        
+        # Ожидаем, что значение выбралось
+        self.wait.until(
+            lambda driver: driver.find_element(*self.locators.RENTAL_PERIOD_INPUT).get_attribute("value") != ""
+        )
     
     @allure.step("Выбрать цвет самоката: {color}")
     def _select_color(self, color):
@@ -123,7 +138,7 @@ class OrderPage(BasePage):
     @allure.step("Нажать кнопку 'Заказать' на второй странице")
     def _click_order_button(self):
         """Нажать кнопку 'Заказать'"""
-        # Находим кнопку в контейнере формы (один надежный способ)
+        # Находим кнопку в контейнере формы
         try:
             order_button = self.find_element(self.locators.ORDER_BUTTON_IN_CONTENT)
         except:
@@ -132,6 +147,9 @@ class OrderPage(BasePage):
         # Прокручиваем к кнопке
         self.scroll_to_webelement(order_button)
         
+        # Ждем, пока кнопка станет кликабельной
+        self.wait.until(EC.element_to_be_clickable(order_button))
+
         # Кликаем через JavaScript
         self.click_webelement_js(order_button)
     
